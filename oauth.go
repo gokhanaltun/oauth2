@@ -12,7 +12,7 @@ type OAuth struct {
 	Config   Config
 }
 
-type StateFunc func() string
+type StateFunc func() (string, error)
 
 type Config struct {
 	ClientID     string
@@ -48,7 +48,11 @@ func (o *OAuth) AuthCodeURL() (string, error) {
 	}
 
 	if o.Config.StateFunc != nil {
-		params.Set("state", o.Config.StateFunc())
+		state, err := o.Config.StateFunc()
+		if err != nil {
+			return "", err
+		}
+		params.Set("state", state)
 	}
 
 	return fmt.Sprintf("%s?%s", o.Provider.AuthURL, params.Encode()), nil
