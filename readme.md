@@ -13,7 +13,6 @@ go get github.com/gokhanaltun/oauth2
 - Easily configurable authentication flow.
 - Handles extra parameters dynamically.
 - Provides both raw and formatted API responses.
-- Supports custom state generation.
 
 ## 🛠️ Usage
 
@@ -33,7 +32,6 @@ auth := oauth2.OAuth{
         RedirectURL:  "YOUR_REDIRECT_URL",
         Scopes:       []string{"openid", "email", "profile"},
         ExtraParams:  map[string]string{"access_type": "offline"},
-        StateFunc:    func() string { return "random-state-value" },
     },
 }
 ```
@@ -41,7 +39,7 @@ auth := oauth2.OAuth{
 ### 2️⃣ Get Authorization URL
 
 ```go
-authURL, err := auth.AuthCodeURL()
+authURL, err := auth.AuthCodeURL("unique state param")
 if err != nil {
     fmt.Println("Error generating auth URL:", err)
     return
@@ -126,16 +124,3 @@ Config{
     },
 }
 ```
-
-## 🛡️ Custom State Handling
-
-If you need dynamic state generation:
-
-```go
-Config{
-    StateFunc: func() string {
-        return "secure-random-state"
-    },
-}
-```
-
