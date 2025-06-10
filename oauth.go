@@ -21,7 +21,6 @@ type Config struct {
 	RedirectURL  string
 	Scopes       []string
 	ExtraParams  map[string]string
-	StateFunc    StateFunc
 }
 
 type ExchangeResponse struct {
@@ -33,7 +32,7 @@ type ExchangeResponse struct {
 	IdToken      string `json:"id_token,omitempty"`
 }
 
-func (o *OAuth) AuthCodeURL() (string, error) {
+func (o *OAuth) AuthCodeURL(state string) (string, error) {
 	if err := o.ValidateConfig(); err != nil {
 		return "", err
 	}
@@ -46,17 +45,13 @@ func (o *OAuth) AuthCodeURL() (string, error) {
 
 	if len(o.Config.ExtraParams) > 0 {
 		for key, value := range o.Config.ExtraParams {
-			if value != "" {
+			if value != "" && key != "state" {
 				params.Set(key, value)
 			}
 		}
 	}
 
-	if o.Config.StateFunc != nil {
-		state, err := o.Config.StateFunc()
-		if err != nil {
-			return "", err
-		}
+	if state != "" {
 		params.Set("state", state)
 	}
 
