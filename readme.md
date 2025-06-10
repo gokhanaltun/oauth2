@@ -5,7 +5,7 @@ This package provides a simple and flexible OAuth2 client for Go applications. I
 ## 🚀 Installation
 
 ```sh
-go get github.com/gokhanaltun/oauth2
+go get github.com/gokhanaltun/oauth2/v2
 ```
 
 ## 📌 Features
@@ -21,7 +21,7 @@ go get github.com/gokhanaltun/oauth2
 ```go
 import (
     "fmt"
-    "github.com/gokhanaltun/oauth2"
+    "github.com/gokhanaltun/oauth2/v2"
 )
 
 auth := oauth2.OAuth{
