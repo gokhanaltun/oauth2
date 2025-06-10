@@ -1,6 +1,7 @@
 package oauth2
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
@@ -25,7 +26,11 @@ type Config struct {
 
 type ExchangeResponse struct {
 	PostFormResponse
-	AccessToken string
+	AccessToken  string `json:"access_token"`
+	TokenType    string `json:"token_type"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresIn    uint64 `json:"expires_in"`
+	IdToken      string `json:"id_token,omitempty"`
 }
 
 func (o *OAuth) AuthCodeURL() (string, error) {
@@ -79,12 +84,10 @@ func (o *OAuth) Exchange(code string) (*ExchangeResponse, error) {
 		PostFormResponse: *postFormResponse,
 	}
 
-	accessToken, ok := exchangeResponse.FormattedResponseBody["access_token"].(string)
-	if !ok {
-		return exchangeResponse, errors.New("failed to obtain access token")
+	jsonParseErr := json.Unmarshal(postFormResponse.RawResponseBody, &exchangeResponse)
+	if jsonParseErr != nil {
+		return exchangeResponse, errors.New("failed to parse json response")
 	}
-
-	exchangeResponse.AccessToken = accessToken
 
 	return exchangeResponse, nil
 }
